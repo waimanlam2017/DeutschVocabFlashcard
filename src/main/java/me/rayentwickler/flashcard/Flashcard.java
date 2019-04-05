@@ -1,7 +1,5 @@
 package me.rayentwickler.flashcard;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -17,19 +15,16 @@ import java.util.concurrent.TimeUnit;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.stage.Stage;
-import me.rayentwickler.flashcard.GermanWord;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -37,6 +32,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class Flashcard extends Application implements Runnable {
 	public static boolean drillFlag = false;
@@ -58,14 +54,14 @@ public class Flashcard extends Application implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void showBeginPrompt() {
 		VBox vbox = new VBox();
-		Scene scene = new Scene(vbox, 356, 600);
+		Scene scene = new Scene(vbox, 1000, 1000);
 		Stage stage = new Stage();
 		stage.setTitle("Guten Tag");
-		stage.setScene(scene);		
-		
+		stage.setScene(scene);
+
 		Label label = new Label("It's time for German Vocabulary Drill! Press OK to start");
 		setLabelFontWidthHeight(label, "Georgia", 30, 300, 100);
 
@@ -88,10 +84,11 @@ public class Flashcard extends Application implements Runnable {
 			}
 		});
 
+		vbox.getChildren().add(label);
 		vbox.getChildren().add(getStartupIcon());
 		vbox.getChildren().add(btnOK);
 		vbox.getChildren().add(btnCancel);
-		vbox.setAlignment(Pos.CENTER);				
+		vbox.setAlignment(Pos.CENTER);
 		stage.showAndWait();
 	}
 
@@ -298,18 +295,13 @@ public class Flashcard extends Application implements Runnable {
 		}
 
 	}
-	
+
 	public ImageView getStartupIcon() {
 		Image image = null;
-		try {
-			PropertyReader pr = new PropertyReader();
-			image = new Image(new FileInputStream(pr.getProperty("icon")));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		image = new Image(Flashcard.class.getClassLoader().getResourceAsStream("brandenburgertor.jpg"));
 		ImageView imageView = new ImageView(image);
 		return imageView;
-		
+
 	}
 
 	public static void main(String[] args) {

@@ -11,13 +11,8 @@ public class SQLiteUtil {
 
 	public void connect() throws ClassNotFoundException {
 		Class.forName("org.sqlite.JDBC");
-		PropertyReader pr = new PropertyReader();
 		try {
-
-			String url = "jdbc:sqlite:" + pr.getProperty("data.dir") + pr.getProperty("dbFilename");
-			System.out.println(url);
-			this.conn = DriverManager.getConnection(url);
-
+			this.conn = DriverManager.getConnection("jdbc:sqlite::resource:Vokabeln.sqlite");
 			if (this.conn != null) {
 				System.out.println("Connection to SQLite has been established.");
 			}

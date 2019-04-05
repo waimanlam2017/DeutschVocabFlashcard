@@ -1,0 +1,30 @@
+import org.gradle.plugins.ide.eclipse.model.AccessRule
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'Flashcard'
+    }
+}
+
+eclipse {
+    classpath {
+        file {
+            whenMerged {
+                def jre = entries.find { it.path.contains 'org.eclipse.jdt.launching.JRE_CONTAINER' }
+                jre.accessRules.add(new AccessRule('0', 'javafx/**'))
+            }
+        }
+    }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+dependencies {
+	compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.7.2'
+
+	testImplementation 'junit:junit:4.12'
+}

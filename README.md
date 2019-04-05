@@ -12,18 +12,27 @@ It included a built-in review interval logic, it would pick 10 words which has a
 For example, here is a word:
 
 Article - 'der'
+
 Word - 'Abend'
+
 Last_Review_Date - 2019-02-01
+
 Next_Review_Date - 2019-02-26
+
 Next_Review_Inteval - 1
 
 The software would check the column 'Next_Review_Date' to see whether to revise this word. After a successful game, the database would be updated:
 
 For example:
+
 Article - 'der'
+
 Word - 'Abend'
+
 Last_Review_Date - 2019-04-05
+
 Next_Review_Date - 2019-04-06
+
 Next_Review_Inteval - 2
 
 The column 'Next_Review_Date' is updated to the value of 'Last_Review_Date' plus 1, and the column 'Next_Review_Inteval' is updated to 2.
@@ -47,3 +56,7 @@ SQLite Browser  ( https://sqlitebrowser.org/ )
 Package description
 ---
 /data - contain Vokabeln.sqlite
+
+/pic - contain a startup picture 'gutentag.jpg', 'gutentag.jpg' is the hardcoded default
+
+/src - Source

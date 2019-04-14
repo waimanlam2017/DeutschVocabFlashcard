@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -18,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class Flashcard implements Runnable {
 
@@ -103,6 +105,13 @@ public class Flashcard implements Runnable {
 		bigVBox.getChildren().add(flashcardFront);
 		bigVBox.getChildren().add(threeChoices);
 		bigVBox.setAlignment(Pos.CENTER);
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent e) {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
 		stage.showAndWait();
 
 		if (handlerReturnValue.getHasReturnValue()) {

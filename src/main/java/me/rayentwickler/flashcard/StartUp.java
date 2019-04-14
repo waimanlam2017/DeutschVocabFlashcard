@@ -13,6 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -31,6 +32,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class StartUp extends Application implements Runnable {
 	public static boolean drillFlag = false;
@@ -42,8 +44,15 @@ public class StartUp extends Application implements Runnable {
 			if (drillFlag == true) {
 				List<GermanWord> list = getFullReviewList();
 				List<GermanWord> shortList = getShortReviewList(list, 12);
-				Scene vocabScene = reviewVocab(shortList);
+				Scene vocabScene = showVocabList(shortList);
 				primaryStage.setScene(vocabScene);
+				primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+					@Override
+					public void handle(WindowEvent e) {
+						Platform.exit();
+						System.exit(0);
+					}
+				});
 				primaryStage.show();
 			}
 
@@ -54,13 +63,13 @@ public class StartUp extends Application implements Runnable {
 
 	public void showBeginPrompt() {
 		VBox vbox = new VBox();
-		Scene scene = new Scene(vbox, 1000, 1000);
+		Scene scene = new Scene(vbox, 924, 700);
 		Stage stage = new Stage();
 		stage.setTitle("Guten Tag");
 		stage.setScene(scene);
 
-		Label label = new Label("It's time for German Vocabulary Drill! Press OK to start");
-		setLabelFontWidthHeight(label, "Georgia", 30, 300, 100);
+		Label label = new Label("It's time for German Vocabulary Drill!");
+		setLabelFontWidthHeight(label, "Georgia", 30, 300, 60);
 
 		Button btnOK = new Button("OK!");
 		setButtonFontWidthHeight(btnOK, "Georgia", 30, 200, 100);
@@ -89,7 +98,7 @@ public class StartUp extends Application implements Runnable {
 		stage.showAndWait();
 	}
 
-	public Scene reviewVocab(List<GermanWord> list) {
+	public Scene showVocabList(List<GermanWord> list) {
 		ScrollPane sp = new ScrollPane();
 		Scene scene = new Scene(sp, 1000, 750);
 

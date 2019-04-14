@@ -112,7 +112,7 @@ public class StartUp extends Application implements Runnable {
 		vbox.getChildren().add(flowPane);
 
 		for (GermanWord word : list) {
-			System.out.println("Showing " + word.getWord());
+			System.out.println("Showing " + word.getWord() + " Last Review Date=" + word.getLastReviewDate());
 			Label label = new Label(word.getArticle() + " " + word.getWord());
 			setLabelFontWidthHeight(label, "Georgia", 30, 400, 100);
 			if ("der".equals(word.getArticle())) {

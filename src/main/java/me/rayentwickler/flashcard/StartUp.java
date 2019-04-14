@@ -38,7 +38,6 @@ public class StartUp extends Application implements Runnable {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-
 			showBeginPrompt();
 			if (drillFlag == true) {
 				List<GermanWord> list = getFullReviewList();
@@ -128,8 +127,8 @@ public class StartUp extends Application implements Runnable {
 			public void handle(ActionEvent event) {
 				Stage stage = (Stage) btn.getScene().getWindow();
 				stage.close();
-				RealFlashcard realFlashcard = new RealFlashcard(list);
-				realFlashcard.run();
+				Flashcard flashcard = new Flashcard(list);
+				flashcard.run();
 
 			}
 		});
@@ -192,19 +191,30 @@ public class StartUp extends Application implements Runnable {
 	}
 
 	public ImageView getStartupIcon() {
-		Image image = null;
-		image = new Image(StartUp.class.getClassLoader().getResourceAsStream("brandenburgertor.jpg"));
+		PropertyReader pr = new PropertyReader();
+		String iconName = pr.getProperty("iconName");
+		Image image = new Image(StartUp.class.getClassLoader().getResourceAsStream(iconName));
 		ImageView imageView = new ImageView(image);
 		return imageView;
 
 	}
 
 	public static void main(String[] args) {
-		ScheduledExecutorService service = Executors.newScheduledThreadPool(10);
-		Random rand = new Random();
-		long initialDelay = rand.nextInt(1);
-		System.out.println("The service would start after " + initialDelay + " minutes.");
-		service.schedule(new StartUp(), initialDelay, TimeUnit.MINUTES);
+
+		if (args.length != 0 && Integer.parseInt(args[0]) > 1) {
+			ScheduledExecutorService service = Executors.newScheduledThreadPool(10);
+			Random rand = new Random();
+			int initialDelayInt = Integer.parseInt(args[0]);
+			if (initialDelayInt > 120) {
+				initialDelayInt = 120;
+			}
+			long initialDelay = rand.nextInt(initialDelayInt);
+			System.out.println("The service would start after " + initialDelay + " minutes.");
+			service.schedule(new StartUp(), initialDelay, TimeUnit.MINUTES);
+		} else {
+			ScheduledExecutorService service = Executors.newScheduledThreadPool(10);
+			service.schedule(new StartUp(), 0, TimeUnit.MINUTES);
+		}
 	}
 
 	@Override

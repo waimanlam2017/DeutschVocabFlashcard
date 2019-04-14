@@ -19,11 +19,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class RealFlashcard implements Runnable {
+public class Flashcard implements Runnable {
 
 	List<GermanWord> list;
 
-	public RealFlashcard(List<GermanWord> list) {
+	public Flashcard(List<GermanWord> list) {
 		this.list = list;
 	}
 

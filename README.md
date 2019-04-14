@@ -46,6 +46,17 @@ Requirement
 Java 1.8 with JavaFX ( oracle jdk or openjdk with javafx )
 
 
+How to Use
+---
+1. Install Java 1.8 which match your computer's architecture (32-bit or 64-bit)
+
+2. Download DeutschVocabFlashcard.jar into a convenient location of your computer
+
+3. Download Vokabeln.sqlite and put into the same location of DeutschVocabFlashcard.jar
+
+4. In Windows, double-click "DeutschVocabFlashcard.jar"
+
+5. If this does not work, open Command Prompt and type "java -jar DeutschVocabFlashcard.jar"
 
 Useful Software
 ---
@@ -55,8 +66,7 @@ SQLite Browser  ( https://sqlitebrowser.org/ )
 
 Package description
 ---
-/data - contain Vokabeln.sqlite
 
-/pic - contain a startup picture 'gutentag.jpg', 'gutentag.jpg' is the hardcoded default
+/pic - contain some pictures which could be used as cover picture of the program. The image is configured in conf/project.properties. Edit the line with "iconName" 
 
 /src - Source

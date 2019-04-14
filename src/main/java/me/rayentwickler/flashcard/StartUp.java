@@ -18,8 +18,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -34,18 +32,18 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Flashcard extends Application implements Runnable {
+public class StartUp extends Application implements Runnable {
 	public static boolean drillFlag = false;
 
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			List<GermanWord> list = getFullReviewList();
-			List<GermanWord> shortList = getShortReviewList(list, 12);
-			Scene vocabScene = reviewVocab(shortList);
 
 			showBeginPrompt();
 			if (drillFlag == true) {
+				List<GermanWord> list = getFullReviewList();
+				List<GermanWord> shortList = getShortReviewList(list, 12);
+				Scene vocabScene = reviewVocab(shortList);
 				primaryStage.setScene(vocabScene);
 				primaryStage.show();
 			}
@@ -94,7 +92,7 @@ public class Flashcard extends Application implements Runnable {
 
 	public Scene reviewVocab(List<GermanWord> list) {
 		ScrollPane sp = new ScrollPane();
-		Scene scene = new Scene(sp, 1000, 800);
+		Scene scene = new Scene(sp, 1000, 750);
 
 		FlowPane flowPane = new FlowPane();
 		flowPane.setOrientation(Orientation.HORIZONTAL);
@@ -128,19 +126,10 @@ public class Flashcard extends Application implements Runnable {
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				List<GermanWord> wrongList = new ArrayList<GermanWord>();
-				for (GermanWord word : list) {
-					GermanWord wrongWord = generalReviseStage(list, word);
-					if (wrongWord != null) {
-						wrongList.add(wrongWord);
-					}
-				}
-
-				for (GermanWord word : wrongList) {
-					generalReviseStage(list, word);
-				}
-
-				updateReviewedList(list);
+				Stage stage = (Stage) btn.getScene().getWindow();
+				stage.close();
+				RealFlashcard realFlashcard = new RealFlashcard(list);
+				realFlashcard.run();
 
 			}
 		});
@@ -148,72 +137,6 @@ public class Flashcard extends Application implements Runnable {
 		vbox.getChildren().add(startButtonHBox);
 		sp.setContent(vbox);
 		return scene;
-	}
-
-	public GermanWord generalReviseStage(List<GermanWord> list, GermanWord word) {
-		VBox bigVBox = new VBox();
-		Scene scene = new Scene(bigVBox, 1000, 500);
-		Stage stage = new Stage();
-		stage.setTitle("Flash Card");
-		stage.setScene(scene);
-
-		HBox flashcardFront = new HBox();
-		Label label = new Label(word.getWord());
-		setLabelFontWidthHeight(label, "Georgia", 60, 400, 100);
-		flashcardFront.getChildren().add(label);
-		flashcardFront.setAlignment(Pos.CENTER);
-
-		HBox threeChoices = new HBox();
-		Button btn1 = new Button("der");
-		Button btn2 = new Button("die");
-		Button btn3 = new Button("das");
-		setButtonFontWidthHeight(btn1, "Georgia", 30, 200, 100);
-		setButtonFontWidthHeight(btn2, "Georgia", 30, 200, 100);
-		setButtonFontWidthHeight(btn3, "Georgia", 30, 200, 100);
-		threeChoices.setAlignment(Pos.CENTER);
-
-		HandlerReturnValue handlerReturnValue = new HandlerReturnValue();
-		final EventHandler<ActionEvent> myHandler = new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(final ActionEvent event) {
-				Button button = (Button) event.getSource();
-				if (button.getText().equals(word.getArticle())) {
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Information Dialog");
-					alert.setHeaderText(null);
-					alert.setContentText("Correct!");
-					alert.showAndWait();
-					stage.close();
-				} else {
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Information Dialog");
-					alert.setHeaderText(null);
-					alert.setContentText("Wrong!");
-					alert.showAndWait();
-					handlerReturnValue.setWord(word);
-					handlerReturnValue.setHasReturnValue(true);
-				}
-			}
-		};
-
-		btn1.setOnAction(myHandler);
-		btn2.setOnAction(myHandler);
-		btn3.setOnAction(myHandler);
-
-		threeChoices.getChildren().add(btn1);
-		threeChoices.getChildren().add(btn2);
-		threeChoices.getChildren().add(btn3);
-
-		bigVBox.getChildren().add(flashcardFront);
-		bigVBox.getChildren().add(threeChoices);
-		bigVBox.setAlignment(Pos.CENTER);
-		stage.showAndWait();
-
-		if (handlerReturnValue.getHasReturnValue()) {
-			return handlerReturnValue.getWord();
-		} else {
-			return null;
-		}
 	}
 
 	public void setLabelFontWidthHeight(Label label, String font, int fontSize, int width, int height) {
@@ -268,37 +191,9 @@ public class Flashcard extends Application implements Runnable {
 		return list;
 	}
 
-	public void updateReviewedList(List<GermanWord> list) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate today = LocalDate.now();
-		String todayString = today.format(formatter);
-
-		SQLiteUtil sqllite = null;
-		try {
-			sqllite = new SQLiteUtil();
-			sqllite.connect();
-			for (GermanWord word : list) {
-				int nextReviewInterval = word.getNextReviewInterval() * 2;
-				LocalDate nextReviewDate = today.plusDays(nextReviewInterval);
-				String nextReviewDateString = nextReviewDate.format(formatter);
-				String sql = "Update Vokabeln set Last_Review_Date = " + "\"" + todayString + "\", "
-						+ "Next_Review_Date = " + "\"" + nextReviewDateString + "\", Next_Review_Interval="
-						+ Integer.toString(nextReviewInterval) + " where word = " + "\"" + word.getWord() + "\"";
-				System.out.println(sql);
-				sqllite.executeUpdateSQL(sql);
-
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			sqllite.freeDB();
-		}
-
-	}
-
 	public ImageView getStartupIcon() {
 		Image image = null;
-		image = new Image(Flashcard.class.getClassLoader().getResourceAsStream("brandenburgertor.jpg"));
+		image = new Image(StartUp.class.getClassLoader().getResourceAsStream("brandenburgertor.jpg"));
 		ImageView imageView = new ImageView(image);
 		return imageView;
 
@@ -309,7 +204,7 @@ public class Flashcard extends Application implements Runnable {
 		Random rand = new Random();
 		long initialDelay = rand.nextInt(1);
 		System.out.println("The service would start after " + initialDelay + " minutes.");
-		service.schedule(new Flashcard(), initialDelay, TimeUnit.MINUTES);
+		service.schedule(new StartUp(), initialDelay, TimeUnit.MINUTES);
 	}
 
 	@Override
